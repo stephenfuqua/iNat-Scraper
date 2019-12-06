@@ -1,16 +1,12 @@
 Param(
     [Parameter(Mandatory=$true)]
     [string]
-    $csvFile,
-
-    [Parameter(Mandatory=$true)]
-    [string]
-    $outputDirectory
+    $csvFile
 )
 
-# Constants
 $observationUrlBase="https://api.inaturalist.org/v1/observations/"
-
+$outputDirectory = "./" + $csvFile.Replace(".csv","")
+New-Item -Force -Type Directory -Path $outputDirectory
 
 function Get-ObservationPhotos {
     Param (
@@ -59,18 +55,20 @@ function Get-ObservationPhotos {
     "square" and we can change that to "original" to get the large file uploaded
     by the user.
     #>
-
+    $result = $observation.results[0]
 
     # Loop through photos
-    $observation.results[0].photos | ForEach-Object {
+    $baseName = $outputDirectory + "\" + "observationid-" + $observationId `
+        + "." + $result.taxon.rank + "-" + $result.taxon.name + ".photoid-"
+
+    $result.photos | ForEach-Object {
         $photo = $_
 
         # Replace "square" with "original" to get the full size image
         $url = $photo.url.Replace("square", "original")
 
         # Download the photo
-        $fileName = $outputDirectory + "\" + "observationid-" + $observationId `
-            + ".photoid-" + $photo.id + "." + $photo.license_code `
+        $fileName = $baseName + $photo.id + "." + $photo.license_code `
             + $photo.attribution + ".jpg"
         Invoke-WebRequest -Method Get -Uri $url -OutFile $fileName
  
