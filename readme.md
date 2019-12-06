@@ -11,14 +11,13 @@ Tools for automating retrieval of data and/or files from iNaturalist.
 ### Conditions of Satisfaction
 
 * Read observation Ids from a CSV file containing a column called "id".
-* Store each photo with a name in the following format (each {abc} token is a template indicating a source of information)
-: `observationid-{observationId}.{taxon-rank}-{taxon-name}.photoid-{photoId}.{license}.{attribution}.jpg`
+* Store each photo with a name in the following format: `observationid-<observationId>.<taxon-rank>-<taxon-name>.photoid-<photoId>.<license-code>.<attribution>.jpg`
 
 ## PowerShell Solution
 
 The script `Get-AllPhotosForCsvFile.ps1` in the PowerShell directory achieves the story described above. To run this:
 
-1. Download [Get-AllPhotosForCsvFile.ps1](PowerShell/Get-AllPhotosForCsvFile.ps1).
+1. Download [Get-AllPhotosForCsvFile.ps1](PowerShell/Get-AllPhotosForCsvFile.ps1) (after following this link, click on the "RAW" button before saving the file).
 1. In Windows Explorer, find the directory where you saved (or moved) the file.
 1. Place a copy of your iNaturalist CSV file into the same directory as the script.
 1. Still in Windows Explorer: click in the small directory path input box, between the arrows and the search box. Copy the path there.
