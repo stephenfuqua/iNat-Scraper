@@ -1,3 +1,6 @@
 *.csv
 *.jpg
 out/
+.env
+*.xlsx
+*.pyc
