@@ -4,3 +4,4 @@ out/
 .env
 *.xlsx
 *.pyc
+*.log

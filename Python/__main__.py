@@ -14,13 +14,12 @@ def _configure_logging(log_level: str):
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get(log_level, "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=log_level,
     )
     error_tracker = ErrorHandler()
 
@@ -41,7 +40,7 @@ def main():
     logger.info("Finished with data extraction")
 
     if error_tracker.fired:
-        print("There was a fatal error, please review the log details above.")
+        print("There was an error, please carefully review the log details above.")
         sys.exit(1)
 
 
