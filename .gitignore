@@ -1,3 +1,8 @@
 *.csv
 *.jpg
+!least_bittern.jpg
 out/
+.env
+*.xlsx
+*.pyc
+*.log
