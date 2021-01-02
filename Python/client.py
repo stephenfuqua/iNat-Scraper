@@ -29,7 +29,7 @@ def _build_header(config: Configuration) -> dict:
         "Accept": "application/json",
         "User-Agent": config.user_name,
         "Authentication": config.api_token,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     return headers
@@ -46,11 +46,9 @@ def _evaluate_response(response: Response):
         logger.fatal(f"A fatal error occurred: {response.text}")
         sys.exit(2)
 
-    switch = {
-        HTTPStatus.OK: lambda: None,
-        HTTPStatus.TOO_MANY_REQUESTS: _rate_limited
-    }
+    switch = {HTTPStatus.OK: lambda: None, HTTPStatus.TOO_MANY_REQUESTS: _rate_limited}
     switch.get(response.status_code, _fatal_error)()
+
 
 @retry(
     retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
@@ -69,12 +67,9 @@ def _get_page(config: Configuration, last_id: str, headers: dict) -> dict:
 
     return r.json()
 
-def _there_are_more_results(response: dict):
-    total = response["total_results"]
-    page = response["page"]
-    per_page = response["per_page"]
 
-    return page * per_page < total
+def _there_are_more_results(response: dict):
+    return response["total_results"] > 0
 
 
 def get_project_data(config: Configuration) -> List[dict]:
@@ -105,4 +100,3 @@ def get_project_data(config: Configuration) -> List[dict]:
         results += response["results"]
 
     return results
-
