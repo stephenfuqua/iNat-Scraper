@@ -61,7 +61,6 @@ def _flatten_data(results: List[dict]) -> List[dict]:
 
             o = {
                 "scientific_name": r["taxon"]["name"],
-                "common_name": r["taxon"]["preferred_common_name"],
                 "taxon_id": r["taxon"]["id"],
                 "time_zone": r["created_time_zone"],
                 "latitude": _get_latitude(r["location"]),
@@ -79,6 +78,11 @@ def _flatten_data(results: List[dict]) -> List[dict]:
                     "preferences"
                 ]["allows_curator_coordinate_access"],
             }
+
+            if "preferred_common_name" in r["taxon"]:
+                # If the record does not have a species-level identification
+                # then this field will be absent
+                o["common_name"] = r["taxon"]["preferred_common_name"]
 
             direct_map = [
                 "id",
