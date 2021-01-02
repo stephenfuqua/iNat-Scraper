@@ -55,23 +55,6 @@ def _evaluate_response(response: Response):
     max_calls_total=REQUEST_RETRY_COUNT,
     retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
 )
-def _get_page(config: Configuration, last_id: str, headers: dict) -> dict:
-    url = f"https://api.inaturalist.org/v1/observations?pcid=true&project_id={config.project_slug}&per_page={config.page_size}&order_by=id&order=asc&id_above={last_id}"
-
-    r = get(url, headers)
-    _evaluate_response(r)
-
-    # Honoring iNaturalist's request: "Please keep requests to about 1 per
-    # second, and around 10k API requests a day"
-    sleep(1)
-
-    return r.json()
-
-
-def _there_are_more_results(response: dict):
-    return response["total_results"] > 0
-
-
 def get_project_data(config: Configuration) -> List[dict]:
     """
     Retrieves all data for a given project, iterating over all available pages.
@@ -83,20 +66,20 @@ def get_project_data(config: Configuration) -> List[dict]:
 
     Returns
     -------
-    A list of observations, each of which is a JSON-like dictionary.
+    List[dict]
+        A list of observations, each of which is a JSON-like dictionary.
     """
-
-    results = list()
-
     headers = _build_header(config)
 
-    response = _get_page(config, 0, headers)
-    results += response["results"]
+    url = f"https://api.inaturalist.org/v1/observations?pcid=true&project_id={config.project_slug}&per_page={config.page_size}&order_by=id&order=asc&id_above={config.last_id}"
 
-    while _there_are_more_results(response):
-        last_id = response["results"][-1]["id"]
+    r = get(url, headers)
+    _evaluate_response(r)
 
-        response = _get_page(config, last_id, headers)
-        results += response["results"]
+    # Honoring iNaturalist's request: "Please keep requests to about 1 per
+    # second, and around 10k API requests a day"
+    sleep(1)
 
-    return results
+    response = r.json()
+
+    return response["results"]

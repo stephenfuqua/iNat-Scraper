@@ -1,5 +1,4 @@
 import logging
-import os
 from pprint import pprint as print
 import sys
 
@@ -8,7 +7,7 @@ from errorhandler import ErrorHandler  # type: ignore
 
 from client import get_project_data
 from configuration import get_configuration
-from export import export
+from export import export, build_file_path
 
 def _configure_logging(log_level: str):
 
@@ -34,8 +33,18 @@ def main():
     logger.info("Starting iNaturalist project data extractor.")
     logger.info(f"Configuration: {config}")
 
-    project_data = get_project_data(config)
-    export(config, project_data)
+    file_path = build_file_path(config)
+
+    while 1==1:
+        project_data = get_project_data(config)
+
+        if len(project_data) == 0:
+            # This occurs when there are no more results "above" the last id.
+            break
+
+        export(file_path, project_data)
+
+        config.last_id = project_data[-1]["id"]
 
     logger.info("Finished with data extraction")
 

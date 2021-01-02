@@ -45,7 +45,8 @@ in by hand each time you run the tool.
 | -l | --log-level | LOG_LEVEL | no - default INFO | Standard Python logging level, e.g. ERROR, WARNING, INFO, DEBUG |
 | -u | --user-name | INAT_USER_NAME | yes | iNaturalist user name |
 | -p | --project-slug | PROJECT_SLUG | yes | Slug (short name) of the project to extract |
-| -o | --output-file | OUTPUT_FILE | no - default `out\output.csv` | Directory path and name for output file. |
+| -o | --output-directory | OUTPUT_DIR | no - default `out` | Directory name for output files |
+| -i | --last-id | LAST_ID | no - default 0 | The last observation ID from a previous download, used to start a fresh download from the next available observation |
 
 NOTE: please sign-in to [iNaturalist](https://www.inaturalist.org) with your
 credentials, and then visit https://www.inaturalist.org/users/api_token to
@@ -59,6 +60,8 @@ Poetry sets up the virtual environment for you, so it is now just one command:
 ```bash
 poetry run python . -t <paste your long API token here> -u <your username> -p <e.g. birds-of-texas>
 ```
+
+Look in the `out` directory for a fresh file.
 
 #### Execute without Poetry
 
@@ -98,4 +101,17 @@ python .
   practices](https://www.inaturalist.org/pages/api+recommended+practices)
   requests that users not send more than one request per second. To that end,
   this script sleeps for one second after every request.
-* The script requests 200 observations at a time (the most available)
+* The script requests 200 observations at a time in order to minimize the
+   number of requests
+* They also ask that you not issue more than 10,000 requests per day. The
+  `birds-of-texas` project has 211,024 observations as of Jan 1, 2021. Thus the
+  script will need to issue 1,056 requests to retrieve all records - well below
+  the 10,000 maximum. However, if downloading multiple large projects, it might
+  be good to do so with one project per day to keep from being a burden on their
+  systems.
+* Each batch of 200 observations is written to the output file as soon as it is
+  retrieved, before requesting another batch. Thus if a failure occurs, you can
+  restart the process by looking at the observation id of the last line in the
+  file. Then set the `last_id` argument / environment variable to this last
+  value when re-running the tool. A new output file will be created, so you will
+  need to concatenate the two (or more) files manually.

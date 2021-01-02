@@ -21,9 +21,13 @@ class Configuration:
     project_slug: str
         Slug (short name) of the project to extract
     page_size: int
-        Number of records to retrieve per request. Default: 200. Max: 200. Use lower value for testing.
+        Number of records to retrieve per request. Default: 200. Max: 200. Use
+        lower value for testing.
     output_file: str
         Directory path and name for output file.
+    last_id: str
+        The last observation ID from a previous download, used to start a fresh
+        download from the next available observation.
     """
 
     api_token: str
@@ -32,6 +36,7 @@ class Configuration:
     project_slug: str
     page_size: int
     output_file: str
+    last_id: str
 
 
 def get_configuration(args_in: List[str]) -> Configuration:
@@ -91,11 +96,19 @@ def get_configuration(args_in: List[str]) -> Configuration:
     )
     parser.add(
         "-o",
-        "--output-file",
-        default=os.path.join(".","out","output.csv"),
-        help="Directory path and name for output file.",
+        "--output-directory",
+        default=os.path.join(".","out"),
+        help="Directory name for output files.",
         type=str,
-        env_var="OUTPUT_FILE"
+        env_var="OUTPUT_DIR"
+    )
+    parser.add(
+        "-i",
+        "--last-id",
+        default="0",
+        help="The last observation ID from a previous download, used to start a fresh download from the next available observation.",
+        type=str,
+        env_var="LAST_ID"
     )
 
     args_parsed = parser.parse_args(args_in)

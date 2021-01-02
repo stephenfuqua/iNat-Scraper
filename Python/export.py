@@ -1,6 +1,8 @@
 import logging
 import os
+from datetime import datetime
 from typing import List, Union
+from numpy.lib.function_base import append
 
 import pandas as pd
 
@@ -134,19 +136,40 @@ def _flatten_data(results: List[dict]) -> List[dict]:
     return observations
 
 
-def export(config: Configuration, results: List[dict]):
+def build_file_path(config: Configuration) -> str:
     """
-    Writes out a CSV file for the results.
+    Builds the file path for the export process. If there is an existing output
+    file with the same name then it will be deleted. Because of the timestamp
+    in the name this should not occur.
 
     Parameters
     ----------
     config: Configuration
         A custom Configuration object containing important settings
+    """
+
+    _create_dir(config.output_directory)
+
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    file_path = os.path.join(config.output_directory, f"{config.project_slug}.{timestamp}.csv")
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    return file_path
+
+
+def export(file_path: str, results: List[dict]):
+    """
+    Writes data out to a CSV file in append mode.
+
+    Parameters
+    ----------
+    file_path: str
+        Full path to the output file.
     results: List[dict]
         A list of observations,  each of which is a dictionary
     """
-
-    _create_dir(config.output_file)
 
     df = pd.DataFrame(_flatten_data(results))
 
@@ -207,4 +230,4 @@ def export(config: Configuration, results: List[dict]):
 
     df = df.reindex(columns=column_order)
 
-    df.to_csv(config.output_file, index=False)
+    df.to_csv(file_path, index=False, mode="a")
