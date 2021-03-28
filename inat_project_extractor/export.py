@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-from typing import List, Union
+from typing import List, Optional
 from numpy.lib.function_base import append
 
 import pandas as pd
@@ -17,35 +17,35 @@ def _create_dir(file_path: str):
         os.mkdir(dir)
 
 
-def _get_latitude(location: str) -> Union[None, float]:
-    if location:
-        float(location.split(",")[0])
+def _get_latitude(geojson: dict) -> Optional[float]:
+    if geojson.get("type", "?") != "Point":
+        return None
 
-    return None
-
-
-def _get_longitude(location: str) -> Union[None, float]:
-    if location:
-        float(location.split(",")[1])
-
-    return None
+    return geojson["coordinates"][1];
 
 
-def _get_photo_url(taxon: dict) -> Union[None, str]:
+def _get_longitude(geojson: dict) -> Optional[float]:
+    if geojson.get("type", "?") != "Point":
+        return None
+
+    return geojson["coordinates"][0];
+
+
+def _get_photo_url(taxon: dict) -> Optional[str]:
     if "default_photo" in taxon:
         return taxon["default_photo"]["medium_url"]
 
     return None
 
 
-def _get_sound_url(sounds: list) -> Union[None, str]:
+def _get_sound_url(sounds: list) -> Optional[str]:
     if len(sounds) > 0:
         return sounds[0]["file_url"]
 
     return None
 
 
-def _get_tag_list(tags: list) -> Union[None, str]:
+def _get_tag_list(tags: list) -> Optional[str]:
     if len(tags) > 0:
         return ", ".join(tags)
 
@@ -63,8 +63,8 @@ def _flatten_data(results: List[dict]) -> List[dict]:
                 "scientific_name": r["taxon"]["name"],
                 "taxon_id": r["taxon"]["id"],
                 "time_zone": r["created_time_zone"],
-                "latitude": _get_latitude(r["location"]),
-                "longitude": _get_longitude(r["location"]),
+                "latitude": _get_latitude(r["geojson"]),
+                "longitude": _get_longitude(r["geojson"]),
                 "coordinates_obscured": r["obscured"],
                 "user_id": r["user"]["id"],
                 "user_login": r["user"]["login"],
