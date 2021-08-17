@@ -40,7 +40,13 @@ def _evaluate_response(response: Response):
     logger.info(f"Status code: {response.status_code}")
 
     def _rate_limited():
-        logger.warn(f"Rate limit has been hit")
+        logger.warn("Rate limit has been hit")
+
+    def _not_allowed():
+        logger.error("Token is expired, please get a new token. Or your account is not authorized")
+
+    def _not_found():
+        logger.error("URL not found")
 
     def _fatal_error():
         logger.fatal(f"A fatal error occurred: {response.text}")
@@ -70,7 +76,6 @@ def get_project_data(config: Configuration) -> List[dict]:
         A list of observations, each of which is a JSON-like dictionary.
     """
     headers = _build_header(config)
-
     url = f"https://api.inaturalist.org/v1/observations?pcid=true&project_id={config.project_slug}&per_page={config.page_size}&order_by=id&order=asc&id_above={config.last_id}"
 
     r = get(url, headers)
