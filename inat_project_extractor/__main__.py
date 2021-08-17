@@ -1,4 +1,3 @@
-import json
 import logging
 from pprint import pprint as print
 import sys
@@ -8,9 +7,10 @@ from errorhandler import ErrorHandler  # type: ignore
 
 from client import get_project_data
 from configuration import get_configuration, Configuration
-from export import export, build_file_path
+from export import export
+from merge import merge_bulk_and_api_files
 
-def _configure_logging(log_level: str):
+def _configure_logging(log_level: str) -> None:
 
     logger = logging.getLogger(__name__)
 
@@ -25,12 +25,10 @@ def _configure_logging(log_level: str):
 
     return logger, error_tracker
 
-def _test_with_json_file(file_path: str):
-    out = json.load(open("C:\\source\\iNat-Scraper\\inat_project_extractor\\t-out\\five-observations.json",))
-    export(file_path, out["results"])
 
+def _run(config: Configuration) -> str:
+    file_path = config.get_api_file_output_path()
 
-def _run(config: Configuration, file_path: str):
     while 1==1:
         project_data = get_project_data(config)
 
@@ -42,8 +40,10 @@ def _run(config: Configuration, file_path: str):
 
         config.last_id = project_data[-1]["id"]
 
+    return file_path
 
-def main():
+
+def main() -> None:
     load_dotenv()
     config = get_configuration(sys.argv[1:])
 
@@ -52,10 +52,12 @@ def main():
     logger.info("Starting iNaturalist project data extractor.")
     logger.info(f"Configuration: {config}")
 
-    file_path = build_file_path(config)
-    _run(config, file_path)
+    file_path = _run(config)
 
-    logger.info("Finished with data extraction")
+    if (config.input_file):
+        merge_bulk_and_api_files(config, file_path)
+
+    logger.info("Finished with data extraction.")
 
     if error_tracker.fired:
         print("There was an error, please carefully review the log details above.")
