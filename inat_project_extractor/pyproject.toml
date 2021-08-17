@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "inat_project_extractor"
-version = "0.1.0"
+version = "1.0.0"
 description = "For exporting iNaturalist project data"
 authors = ["Stephen Fuqua <stephen@safnet.com>"]
 license = "MIT"
@@ -12,7 +12,7 @@ ConfigArgParse = "^1.2.3"
 python-dotenv = "^0.15.0"
 opnieuw = "^1.1.0"
 errorhandler = "^2.0.1"
-pandas = "^1.2.0"
+pandas = "1.3.2"
 numpy = "1.19.3"
 
 [tool.poetry.dev-dependencies]
