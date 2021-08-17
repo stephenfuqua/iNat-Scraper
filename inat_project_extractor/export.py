@@ -1,20 +1,9 @@
 import logging
-import os
-from datetime import datetime
 from typing import List, Optional
-from numpy.lib.function_base import append
 
 import pandas as pd
 
-from configuration import Configuration
-
 logger = logging.getLogger(__name__)
-
-
-def _create_dir(file_path: str):
-    dir = os.path.dirname(file_path)
-    if not os.path.exists(dir):
-        os.mkdir(dir)
 
 
 def _get_latitude(geojson: dict) -> Optional[float]:
@@ -102,12 +91,10 @@ def _flatten_data(results: List[dict]) -> List[dict]:
                 "private_positional_accuracy",
                 "geoprivacy",
                 "taxon_geoprivacy",
-                # Is there a way to check these?
                 "positioning_method",
                 "positioning_device",
                 "out_of_range",
                 "tracking_code",
-                # /
                 "created_at",
                 "updated_at",
                 "quality_grade",
@@ -138,29 +125,6 @@ def _flatten_data(results: List[dict]) -> List[dict]:
             logger.exception(ex)
 
     return observations
-
-
-def build_file_path(config: Configuration) -> str:
-    """
-    Builds the file path for the export process. If there is an existing output
-    file with the same name then it will be deleted. Because of the timestamp
-    in the name this should not occur.
-
-    Parameters
-    ----------
-    config: Configuration
-        A custom Configuration object containing important settings
-    """
-
-    _create_dir(config.output_directory)
-
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    file_path = os.path.join(config.output_directory, f"{config.project_slug}.{timestamp}.csv")
-
-    if os.path.exists(file_path):
-        os.remove(file_path)
-
-    return file_path
 
 
 def export(file_path: str, results: List[dict]):
