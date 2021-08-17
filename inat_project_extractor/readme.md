@@ -38,15 +38,16 @@ in by hand each time you run the tool.
 
 ### Command Line Arguments
 
-| Short Flag | Long Flag | Environment Variable | Required? | Description |
-| -- | -- | -- | -- | -- |
-| -h | --help  | - | n/a | show a help message and exit |
-| -t | --api-token | INAT_API_TOKEN | yes | An API token acquired from https://www.inaturalist.org/users/api_token |
-| -l | --log-level | LOG_LEVEL | no - default INFO | Standard Python logging level, e.g. ERROR, WARNING, INFO, DEBUG |
-| -u | --user-name | INAT_USER_NAME | yes | iNaturalist user name |
-| -p | --project-slug | PROJECT_SLUG | yes | Slug (short name) of the project to extract |
-| -o | --output-directory | OUTPUT_DIR | no - default `out` | Directory name for output files |
-| -i | --last-id | LAST_ID | no - default 0 | The last observation ID from a previous download, used to start a fresh download from the next available observation |
+| Short Flag | Long Flag          | Environment Variable | Required?          | Description                                                                                                          |
+| ---------- | ------------------ | -------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| -h         | --help             | -                    | n/a                | show a help message and exit                                                                                         |
+| -t         | --api-token        | INAT_API_TOKEN       | yes                | An API token acquired from https://www.inaturalist.org/users/api_token                                               |
+|            | --log-level        | LOG_LEVEL            | no - default INFO  | Standard Python logging level, e.g. ERROR, WARNING, INFO, DEBUG                                                      |
+| -u         | --user-name        | INAT_USER_NAME       | yes                | iNaturalist user name                                                                                                |
+| -p         | --project-slug     | PROJECT_SLUG         | yes                | Slug (short name) of the project to extract                                                                          |
+| -o         | --output-directory | OUTPUT_DIR           | no - default `out` | Directory name for output files                                                                                      |
+| -l         | --last-id          | LAST_ID              | no - default 0     | The last observation ID from a previous download, used to start a fresh download from the next available observation |
+| -i         | --input-file       | INPUT_FILE           | no                 | An input file to merge with the downloaded results                                                                   |
 
 NOTE: please sign-in to [iNaturalist](https://www.inaturalist.org) with your
 credentials, and then visit https://www.inaturalist.org/users/api_token to
